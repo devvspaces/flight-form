@@ -1,0 +1,8 @@
+asgiref==3.7.2
+autopep8==2.0.4
+Django==5.0.2
+psycopg2==2.9.9
+pycodestyle==2.11.1
+python-decouple==3.8
+sqlparse==0.4.4
+tzdata==2023.4
