@@ -60,7 +60,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Based on the value of the DB_OPTION variable,
 # the DATABASES dictionary is set to use either PostgreSQL or SQLite.
 
-DB_OPTION = 'postgres'
+DB_OPTION = config('DB_OPTION')
 
 if DB_OPTION == 'postgres':
     DATABASES = {
@@ -69,8 +69,8 @@ if DB_OPTION == 'postgres':
             'NAME': config("DB_NAME"),
             'USER': config("DB_USER"),
             'PASSWORD': config("DB_PASSWORD"),
-            'HOST': 'localhost',
-            'PORT': '',
+            'HOST': config('DB_HOST'),
+            'PORT': config('DB_PORT'),
         }
     }
 else:
@@ -81,9 +81,6 @@ else:
         }
     }
 
-
-# Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
