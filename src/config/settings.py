@@ -57,25 +57,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
+# Based on the value of the DB_OPTION variable,
+# the DATABASES dictionary is set to use either PostgreSQL or SQLite.
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': config("DB_NAME"),
-#         'USER': config("DB_USER"),
-#         'PASSWORD': config("DB_PASSWORD"),
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
+DB_OPTION = 'postgres'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DB_OPTION == 'postgres':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': config("DB_NAME"),
+            'USER': config("DB_USER"),
+            'PASSWORD': config("DB_PASSWORD"),
+            'HOST': 'localhost',
+            'PORT': '',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
