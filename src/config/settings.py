@@ -7,6 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = config("SECRET_KEY")
+SIGNATURIT_TOKEN = config("SIGNATURIT_TOKEN")
 
 DEBUG = config("DEBUG", default=False, cast=bool)
 
