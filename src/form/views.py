@@ -3,9 +3,9 @@ from django.http import JsonResponse
 from .models import FlightForm
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from signaturit_sdk.signaturit_client import SignaturitClient
 from django.conf import settings
 from .forms import FlightForm as FlightFormForm
+import requests
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -13,23 +13,36 @@ class GetSignature(FormView):
     form_class = FlightFormForm
 
     def form_valid(self, form):
-        client = SignaturitClient(
-            settings.SIGNATURIT_TOKEN)
-        response = client.create_signature([], {
-            'name': 'John',
-            'email': 'john.doe@gmail.com'
-        }, {
-            'delivery_type': 'url',
-            'templates': ['89dca1ff-e048-4227-a07e-cb3667eba2a3'],
-            'data': {
-                'name': form.cleaned_data['name'],
-                'surname': form.cleaned_data['surname'],
-            }
-        })
-        print(response)
+        base_url = 'https://api.sandbox.signaturit.com/v3/signatures.json'
+        headers = {
+            'Authorization': f'Bearer {settings.SIGNATURIT_TOKEN}'
+        }
+        data = {
+            "recipients": [
+                {
+                    "name": form.cleaned_data.get('name'),
+                    "email": form.cleaned_data.get('email')
+                }
+            ],
+            "templates": ["#test"],
+            "data": {
+                "name": form.cleaned_data.get('name'),
+                "surname": form.cleaned_data.get('surname')
+                }
+        }
+        response = requests.post(base_url, headers=headers, json=data)
+
+        if response.status_code != 200:
+            try:
+                return JsonResponse(response.json(), status=400)
+            except Exception:
+                return JsonResponse(
+                    {'error': 'An error occurred while sending the signature!'},
+                    status=400)
+
         return JsonResponse({
             'message': 'Signature was sent successfully!',
-            'signature_id': response['id']
+            'signature_id': response.json().get('id')
         })
 
     def form_invalid(self, form):
