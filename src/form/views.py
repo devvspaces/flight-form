@@ -28,21 +28,24 @@ class GetSignature(FormView):
             "data": {
                 "name": form.cleaned_data.get('name'),
                 "surname": form.cleaned_data.get('surname')
-                }
+            },
+            "delivery_type": "url"
         }
         response = requests.post(base_url, headers=headers, json=data)
 
+        try:
+            data = response.json()
+        except Exception:
+            return JsonResponse(
+                {'error': 'An error occurred while sending the signature!'},
+                status=400)
+
         if response.status_code != 200:
-            try:
-                return JsonResponse(response.json(), status=400)
-            except Exception:
-                return JsonResponse(
-                    {'error': 'An error occurred while sending the signature!'},
-                    status=400)
+            return JsonResponse(response.json(), status=400)
 
         return JsonResponse({
-            'message': 'Signature was sent successfully!',
-            'signature_id': response.json().get('id')
+            'id': data.get('id'),
+            'url': data.get('url')
         })
 
     def form_invalid(self, form):
